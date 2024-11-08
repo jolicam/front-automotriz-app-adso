@@ -1,44 +1,51 @@
 <template>
     <div class="container">
-        
-        <div class="container_header">
-            <h2 class="titulo">Modulo de {{titulo}}</h2>
-            <el-row justify="center" align="middle">
-                <el-button type="primary">{{ tituloBoton }}</el-button>
-    
-            </el-row>
-
-        </div>
-
-
+     
+      <div class="container__header">
+        <h2 class="container__title">Modulo de {{ titulo }}</h2>
+        <el-row justify="center" align="middle">
+          <el-button type="primary" @click="abrir" class="padded-button">
+            {{ tituloBoton }}
+          </el-button>
+        </el-row>
+      </div>
     </div>
-
-</template>
-
-
-
-<script setup>
-
-defineProps({
-  titulo: String,
-  tituloBoton: String,
+  </template>
   
-})
-
-</script>
-
-
-<style scoped>
-.container{
+  <script setup>
+  defineProps({
+    titulo: { type: String, required: true },
+    tituloBoton: { type: String, required: true },
+    abrir: { type: Function, required: true }
+  });
+  </script>
+  
+  <style scoped>
+  .container {
     margin-bottom: 10px;
-}
-
-.container_header{
+  }
+  
+  
+  .container__header {
     display: flex;
     justify-content: space-between;
-    padding: 0px;
-}
-
-
-
-</style>
+    align-items: center;
+    border-bottom: 2px solid rgb(238, 233, 233);
+    padding: 10px; 
+  }
+  
+  
+  .container__title {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  
+  .padded-button {
+    padding: 20px;
+    background-color: #7f5af0;
+    border: none;
+    color: white;
+  }
+  </style>
+  

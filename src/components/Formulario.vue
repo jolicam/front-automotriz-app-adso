@@ -1,32 +1,92 @@
 <template>
-
-
-    <div class="container_header">
-        <h2 class="titulo">Modulo de {{titulo}}</h2>
-        <el-row justify="center" align="middle">
-            <el-button type="primary">Cancelar</el-button>
-            <el-button type="primary">Guardar</el-button>
-    
-        </el-row>
-    
-        <slot name="slotForm" ></slot>
-        </div>
-    
-    
-    
-    </template>
-    
-    
-    
-    <script setup>
-    
-    defineProps({
-      titulo: String,
-      
-    })
-    
-    </script>
-    
-    
-    <style scoped>
-    </style>
+    <el-container v-show="isVisible" class="form-container">
+     
+      <el-row :gutter="5" class="form-container__row">
+        <el-col :xs="18" :sm="18" :md="18" :lg="22" :xl="22" class="form-container__title-col">
+          <el-button text class="form-container__title-button" size="large">
+            Modulo de {{ titulo }}
+          </el-button>
+        </el-col>
+        <el-col :xs="6" :sm="6" :md="6" :lg="2" :xl="2" class="form-container__button-group">
+          <el-button size="large" class="form-container__button-cancel" @click="irAtras">Cancelar</el-button>
+          <el-button type="primary" size="large" class="form-container__button-submit" @click="submit">
+            {{ tituloBoton }}
+          </el-button>
+        </el-col>
+      </el-row>
+  
+     
+      <el-main class="form-container__main">
+        <slot name="slotForm"></slot>
+      </el-main>
+    </el-container>
+  </template>
+  
+  <script setup>
+  import { computed } from 'vue';
+  
+  const propiedad = defineProps({
+    titulo: String,
+    isEdit: Boolean,
+    isOpen: Boolean,
+  });
+  
+  const tituloBoton = computed(() => (propiedad.isEdit ? 'Actualizar' : 'Guardar'));
+  const isVisible = computed(() => propiedad.isOpen);
+  
+  const $emit = defineEmits(['update:is-open', 'save', 'update']);
+  
+  const irAtras = () => {
+    $emit('update:is-open', false);
+  };
+  
+  const submit = () => {
+    if (propiedad.isEdit) {
+      $emit('update');
+    } else {
+      $emit('save');
+    }
+  };
+  </script>
+  
+  <style scoped>
+  .form-container {
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 5px;
+    width: 100%;
+    z-index: 90;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh + 42%);
+  }
+  
+  .form-container__row {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+  }
+  
+  
+  .form-container__title-button {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  
+  .form-container__button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  
+  .form-container__button-submit {
+    background-color: #2fbe98;
+    border: none;
+    color: white;
+  }
+  </style>
+  

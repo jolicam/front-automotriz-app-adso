@@ -1,53 +1,75 @@
 <template>
-  <div>
-    <h1>Formulario de Clientes</h1>
-    <form @submit.prevent="submitForm">
-      <div>
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" v-model="formData.nombre" required />
-      </div>
-      <div>
-        <label for="apellido">Apellido:</label>
-        <input type="text" id="apellido" v-model="formData.apellido" required />
-      </div>
-      <div>
-        <label for="identificacion">Identificación:</label>
-        <input type="text" id="identificacion" v-model="formData.identificacion" required />
-      </div>
-      <div>
-        <label for="direccion">Dirección:</label>
-        <input type="text" id="direccion" v-model="formData.direccion" required />
-      </div>
-      <div>
-        <label for="telefono">Teléfono:</label>
-        <input type="tel" id="telefono" v-model="formData.telefono" required />
-      </div>
-      <div>
-        <label for="email">Correo Electrónico:</label>
-        <input type="email" id="email" v-model="formData.email" required />
-      </div>
-      <button type="submit">Guardar Cliente</button>
-    </form>
-  </div>
+  <el-form
+    ref="formRef"
+    style="max-width: 100%"
+    :model="formulario"
+    :rules="rulesForm"
+    label-width="auto"
+    :size="formSize"
+    status-icon
+  >
+    <el-form-item label="Nombre" prop="nombre">
+      <el-input v-model="formulario.nombre" />
+    </el-form-item>
+    <el-form-item label="Apellido" prop="apellido">
+      <el-input v-model="formulario.apellido" />
+    </el-form-item>
+    <el-form-item label="Identificación" prop="identificacion">
+      <el-input v-model="formulario.identificacion" />
+    </el-form-item>
+    <el-form-item label="Dirección" prop="direccion">
+      <el-input v-model="formulario.direccion" />
+    </el-form-item>
+    <el-form-item label="Teléfono" prop="telefono">
+      <el-input v-model="formulario.telefono" />
+    </el-form-item>
+    <el-form-item label="Correo Electrónico" prop="email">
+      <el-input v-model="formulario.email" />
+    </el-form-item>
+  </el-form>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { reactive, ref } from 'vue'
 
-const formData = ref({
+const formSize = ref('default')
+const formRef = ref()
+const formulario = reactive({
   nombre: '',
   apellido: '',
   identificacion: '',
   direccion: '',
   telefono: '',
   email: '',
-});
+})
 
-const submitForm = () => {
-  console.log('Cliente guardado:', formData.value);
-};
+const rulesForm = reactive({
+  nombre: [{ required: true, message: 'Por favor ingrese el nombre', trigger: 'blur' }],
+  apellido: [{ required: true, message: 'Por favor ingrese el apellido', trigger: 'blur' }],
+  identificacion: [{ required: true, message: 'Por favor ingrese la identificación', trigger: 'blur' }],
+  direccion: [{ required: true, message: 'Por favor ingrese la dirección', trigger: 'blur' }],
+  telefono: [{ required: true, message: 'Por favor ingrese el teléfono', trigger: 'blur' }],
+  email: [{ required: true, message: 'Por favor ingrese el correo electrónico', trigger: 'blur' }],
+})
+
+const limpiarFormulario = () => {
+  formRef.value.resetFields()    
+}
+
+const validarFormulario = () => {
+  return new Promise((resolve) => {
+    formRef.value?.validate((valid) => {
+      if (valid) {
+        resolve(true)            
+      } else {
+        resolve(false)             
+      }
+    })
+  })        
+}
+
+defineExpose({ validarFormulario, formulario, limpiarFormulario })
 </script>
 
 <style scoped>
-
 </style>

@@ -42,8 +42,8 @@ span.el-avatar.el-avatar--circle {
 }
 
 .brand {
-  font-size: 24px; /* Tamaño de la fuente para el texto */
-  font-weight: bold; /* Negrita */
-  color: white; /* Color del texto */
+  font-size: 24px; 
+  font-weight: bold; 
+  color: white; 
 }
 </style>

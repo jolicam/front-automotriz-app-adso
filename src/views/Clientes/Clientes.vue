@@ -1,27 +1,28 @@
 <template>
   <LayoutMain>
     <template #slotLayout>
-      <Header 
-        :titulo="'Clientes'"
-        :tituloBoton="'Crear Cliente'"
-      />
-      <Formulario :titulo="'Formulario de Clientes'">
+      <Header :titulo="'Clientes'" :tituloBoton="'Crear Cliente'" :abrir="abrirFormulario" />
+
+      <Formulario :titulo="'Gestión de Clientes'" v-model:is-open="mostrarFormulario" :is-edit="editandoFormulario" @save="guardarDatos">
         <template #slotForm>
-          <FormClientes />
+          <el-row :gutter="20">
+            <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+              <FormClientes v-model:is-open="mostrarFormulario" :is-edit="editandoFormulario" ref="formRef" />
+            </el-col>
+          </el-row>
         </template>
       </Formulario>
 
-      <el-table :data="tableData" stripe style="width: 100%">
-        <el-table-column prop="name" label="Nombre" width="180" />
-        <el-table-column prop="surname" label="Apellido" width="180" />
-        <el-table-column prop="identificacion" label="identificacion" width="180" />
-        <el-table-column prop="phone" label="Teléfono" />
-        <el-table-column prop="direccion" label="Dirección" width="180" />
-        <el-table-column prop="email" label="CorreoElectronico" width="180" />
+      <el-table :data="clientes" stripe style="width: 100%">
+        <el-table-column prop="nombre" label="Nombre" />
+        <el-table-column prop="apellido" label="Apellido" />
+        <el-table-column prop="identificacion" label="Identificación" />
+        <el-table-column prop="telefono" label="Teléfono" />
+        <el-table-column prop="correo_electronico" label="Correo Electrónico" />
         <el-table-column fixed="right" label="Acciones" min-width="120">
           <template #default>
-            <el-button link type="primary" size="large" :icon="Edit" />
-            <el-button link type="danger" :icon="Delete" />
+            <el-button link type="primary" size="large" :icon="Edit" @click="editarFormulario"></el-button>
+            <el-button link type="danger" :icon="Delete" @click="eliminarCliente"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -30,30 +31,90 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import LayoutMain from '../../components/LayoutMain.vue'
-import FormClientes from './components/formClientes.vue'  
 import Formulario from '../../components/Formulario.vue'
 import Header from '../../components/Header.vue'
 import { Delete, Edit } from "@element-plus/icons-vue"
+import FormClientes from './components/FormClientes.vue'
+import { ElMessage } from 'element-plus'
+import axios from 'axios'
 
-const tableData = [
-  {
-    name: 'Juan Pérez',
-    surname: 'Pérez',
-    identificacion: '1009937293', 
-    direccion: 'Calle 45 #12-34, Bogotá',
-    phone: '3001234567',
-    email: 'juan.perez@hotmail.com' 
-  },
-  {
-    name: 'María López',
-    surname: 'López', 
-    identificacion: '52487939', 
-    direccion: 'Carrera 7 #56-78, Bogotá',
-    phone: '3129876543',
-    email: 'maria.lopez@hotmail.com' 
+const mostrarFormulario = ref(false)
+const editandoFormulario = ref(false)
+const formRef = ref()
+const clientes = ref([])
+
+const abrirFormulario = () => {
+  mostrarFormulario.value = true
+  editandoFormulario.value = false
+}
+
+const editarFormulario = async () => {
+  mostrarFormulario.value = true
+  editandoFormulario.value = true
+}
+
+const guardarDatos = async () => {
+  const validacion = await formRef.value?.validarFormulario()
+  if (validacion) {
+    await crearCliente()
   }
-];
+}
 
+const crearCliente = async () => {
+  const url = 'http://127.0.0.1:8000/api/cliente/save'
+
+  const dataFormulario = {
+    nombre: formRef.value.formulario.nombre,
+    apellido: formRef.value.formulario.apellido,
+    identificacion: formRef.value.formulario.identificacion,
+    telefono: formRef.value.formulario.telefono,
+    correo_electronico: formRef.value.formulario.correo_electronico
+  }
+
+  try {
+    await axios.post(url, dataFormulario)
+      .then((response) => {
+        console.log(response)
+        formRef.value?.limpiarFormulario()
+        ElMessage({
+          message: 'El cliente se creó con éxito.',
+          type: 'success',
+        })
+        datosCliente()
+        mostrarFormulario.value = false
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  } catch (error) {
+    console.error('Error al crear cliente', error)
+  }
+}
+
+const eliminarCliente = async () => {
+  console.log('Cliente eliminado')
+}
+
+const datosCliente = async () => {
+  const url = 'http://127.0.0.1:8000/api/cliente/datos'
+
+  try {
+    await axios.get(url)
+      .then((response) => {
+        clientes.value = response.data.result
+        console.log(response)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  } catch (error) {
+    console.error('Error al cargar datos de cliente', error)
+  }
+}
+
+onMounted(() => {
+  datosCliente()
+})
 </script>
