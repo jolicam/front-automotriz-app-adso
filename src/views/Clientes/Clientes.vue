@@ -1,13 +1,15 @@
 <template>
   <LayoutMain>
     <template #slotLayout>
-      <Header :titulo="'Clientes'" :tituloBoton="'Crear Cliente'" :abrir="abrirFormulario" />
+      <Header :titulo="'Clientes'" :tituloBoton="'Crear Cliente +'" :abrir="abrirFormulario" />
 
-      <Formulario :titulo="'Gestión de Clientes'" v-model:is-open="mostrarFormulario" :is-edit="editandoFormulario" @save="guardarDatos">
+      <Formulario :titulo="'Gestión de Clientes'" v-model:is-open="mostrarFormulario" :is-edit="editandoFormulario"
+        @save="guardarDatos" @update="actualizarDatos">
         <template #slotForm>
           <el-row :gutter="20">
             <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-              <FormClientes v-model:is-open="mostrarFormulario" :is-edit="editandoFormulario" ref="formRef" />
+              <FormClientes v-model:is-open="mostrarFormulario" :is-edit="editandoFormulario" ref="formRef"
+                :dataValue="dataClienteById" />
             </el-col>
           </el-row>
         </template>
@@ -21,7 +23,8 @@
         <el-table-column prop="correo_electronico" label="Correo Electrónico" />
         <el-table-column fixed="right" label="Acciones" min-width="120">
           <template #default="registro">
-            <el-button link type="primary" size="large" :icon="Edit" @click="editarFormulario(registro.row.id)"></el-button>
+            <el-button link type="primary" size="large" :icon="Edit" @click="editarFormulario(registro.row.id)">
+            </el-button>
             <el-button link type="danger" :icon="Delete" @click="eliminarCliente(registro.row.id)"></el-button>
           </template>
         </el-table-column>
@@ -43,6 +46,7 @@ import axios from 'axios'
 const mostrarFormulario = ref(false)
 const editandoFormulario = ref(false)
 const formRef = ref()
+const dataClienteById = ref()
 const clientes = ref([])
 
 const abrirFormulario = () => {
@@ -51,10 +55,7 @@ const abrirFormulario = () => {
 }
 
 const editarFormulario = async (id) => {
-  // Obtener datos del cliente por ID
-  const cliente = await obtenerCliente(id)
-  // Cargar datos en el formulario
-  formRef.value.formulario = cliente
+  dataClienteById.value = await obtenerCliente(id)
   mostrarFormulario.value = true
   editandoFormulario.value = true
 }
@@ -62,11 +63,14 @@ const editarFormulario = async (id) => {
 const guardarDatos = async () => {
   const validacion = await formRef.value?.validarFormulario()
   if (validacion) {
-    if (editandoFormulario.value) {
-      await actualizarCliente()
-    } else {
-      await crearCliente()
-    }
+    await crearCliente()
+  }
+}
+
+const actualizarDatos = async () => {
+  const validacion = await formRef.value?.validarFormulario()
+  if (validacion) {
+    await actualizarCliente()
   }
 }
 
@@ -81,14 +85,14 @@ const crearCliente = async () => {
   }
 
   try {
-    await axios.post(url, dataFormulario)
+    axios.post(url, dataFormulario)
       .then((response) => {
         formRef.value?.limpiarFormulario()
         ElMessage({
           message: 'El cliente se creó con éxito.',
           type: 'success',
         })
-        datosCliente()
+        obtenerClientes()
         mostrarFormulario.value = false
       })
       .catch((error) => {
@@ -102,7 +106,7 @@ const crearCliente = async () => {
 const actualizarCliente = async () => {
   const url = 'http://127.0.0.1:8000/api/cliente/update'
   const dataFormulario = {
-    id: formRef.value.formulario.id,
+    id: dataClienteById.value[0].id,
     nombre: formRef.value.formulario.nombre,
     apellido: formRef.value.formulario.apellido,
     identificacion: formRef.value.formulario.identificacion,
@@ -111,14 +115,14 @@ const actualizarCliente = async () => {
   }
 
   try {
-    await axios.put(url, dataFormulario)
+    axios.put(url, dataFormulario)
       .then((response) => {
         formRef.value?.limpiarFormulario()
         ElMessage({
           message: 'El cliente se actualizó con éxito.',
           type: 'success',
         })
-        datosCliente()
+        obtenerClientes()
         mostrarFormulario.value = false
       })
       .catch((error) => {
@@ -143,7 +147,7 @@ const eliminarCliente = async (id) => {
   ).then(() => {
     axios.delete(url, { data: { id } })
       .then((response) => {
-        datosCliente() // Recargar la lista
+        obtenerClientes()
         ElMessage({
           type: 'success',
           message: 'Cliente eliminado correctamente',
@@ -161,18 +165,35 @@ const eliminarCliente = async (id) => {
 }
 
 const obtenerCliente = async (id) => {
-  const url = `http://127.0.0.1:8000/api/cliente/${id}`
-  const response = await axios.get(url)
-  return response.data
+  const url = `http://127.0.0.1:8000/api/cliente/datosById`
+  try {
+    const response = await axios.get(url, {
+      params: {
+        id: id
+      }
+    })
+    return response.data.result
+  } catch (error) {
+    console.error('Error al obtener cliente por ID', error)
+  }
 }
 
-const datosCliente = async () => {
-  const url = 'http://127.0.0.1:8000/api/clientes'
-  const response = await axios.get(url)
-  clientes.value = response.data
+const obtenerClientes = async () => {
+  const url = 'http://127.0.0.1:8000/api/cliente/datos'
+  try {
+    axios.get(url)
+      .then((response) => {
+        clientes.value = response.data.result
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  } catch (error) {
+    console.error('Error al obtener clientes', error)
+  }
 }
 
 onMounted(() => {
-  datosCliente()
+  obtenerClientes()
 })
 </script>

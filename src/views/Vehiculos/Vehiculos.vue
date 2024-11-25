@@ -7,7 +7,7 @@
         <template #slotForm>
           <el-row :gutter="20">
             <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-              <formVehiculos v-model:is-open="mostrarFormulario" :is-edit="editandoFormulario" ref="formRef" />
+              <formVehiculos v-model:is-open="mostrarFormulario" :is-edit="editandoFormulario" ref="formRef" :clientes="clientes" :dataValue="dataVehiculoById" />
             </el-col>
           </el-row>
         </template>
@@ -20,9 +20,9 @@
         <el-table-column prop="año" label="Año" />
         <el-table-column prop="cliente_id" label="ID Cliente" />
         <el-table-column fixed="right" label="Acciones" min-width="120">
-          <template #default>
-            <el-button link type="primary" size="large" :icon="Edit" @click="editarFormulario"></el-button>
-            <el-button link type="danger" :icon="Delete" @click="eliminarVehiculo"></el-button>
+          <template #default="registro">
+            <el-button link type="primary" size="large" :icon="Edit" @click="editarFormulario(registro.row.id)"></el-button>
+            <el-button link type="danger" :icon="Delete" @click="eliminarVehiculo(registro.row.id)"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -31,26 +31,29 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import LayoutMain from '../../components/LayoutMain.vue'
 import Formulario from '../../components/Formulario.vue'
 import Header from '../../components/Header.vue'
 import { Delete, Edit } from "@element-plus/icons-vue"
-import formVehiculos from "./components/formVehiculos.vue" // Asegúrate de que este nombre es correcto
-import { ElMessage } from 'element-plus'
+import formVehiculos from './components/formVehiculos.vue' // Asegúrate de que este nombre es correcto
+import { ElMessage, ElMessageBox } from 'element-plus'
 import axios from 'axios'
 
 const mostrarFormulario = ref(false)
 const editandoFormulario = ref(false)
 const formRef = ref()
-const vehiculos = ref([])
+const dataVehiculoById = ref()
+const clientes = ref([]) // Cambiado a clientes para el vehículo
+const vehiculos = ref([]) // Cambiado de cargos a vehiculos
 
 const abrirFormulario = () => {
   mostrarFormulario.value = true
   editandoFormulario.value = false
 }
 
-const editarFormulario = async () => {
+const editarFormulario = async (id) => {
+  dataVehiculoById.value = await datosById(id)
   mostrarFormulario.value = true
   editandoFormulario.value = true
 }
@@ -93,8 +96,73 @@ const crearVehiculo = async () => {
   }
 }
 
-const eliminarVehiculo = async () => {
-  console.log('Vehículo eliminado')
+const actualizarVehiculo = async () => {
+  const url = 'http://127.0.0.1:8000/api/vehiculo/update'
+
+  const dataFormulario = {
+    id: dataVehiculoById.value[0].id,
+    placa: formRef.value.formulario.placa,
+    marca: formRef.value.formulario.marca,
+    modelo: formRef.value.formulario.modelo,
+    año: formRef.value.formulario.año,
+    cliente_id: formRef.value.formulario.cliente_id
+  }
+
+  try {
+    await axios.put(url, dataFormulario)
+      .then((response) => {
+        console.log(response)
+        formRef.value?.limpiarFormulario()
+        ElMessage({
+          message: 'El vehículo se actualizó con éxito.',
+          type: 'success',
+        })
+        cargarVehiculos()
+        mostrarFormulario.value = false
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  } catch (error) {
+    console.error('Error al actualizar vehículo', error)
+  }
+}
+
+const eliminarVehiculo = async (id) => {
+  const url = 'http://127.0.0.1:8000/api/vehiculo/delete'
+
+  ElMessageBox.confirm(
+    '¿Está seguro de eliminar este vehículo?',
+    'Eliminar Registro',
+    {
+      confirmButtonText: 'Sí',
+      cancelButtonText: 'Cancelar',
+      type: 'error',
+    }
+  )
+    .then(() => {
+      try {
+        axios.delete(url, { data: { id } })
+          .then(function (response) {
+            cargarVehiculos()
+          })
+          .catch(function (error) {
+            console.log(error)
+          })
+      } catch (error) {
+        console.error('Error al eliminar vehículo', error)
+      }
+      ElMessage({
+        type: 'success',
+        message: 'Se eliminó correctamente el vehículo',
+      })
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: 'Eliminación cancelada',
+      })
+    })
 }
 
 const cargarVehiculos = async () => {
@@ -104,17 +172,33 @@ const cargarVehiculos = async () => {
     await axios.get(url)
       .then((response) => {
         vehiculos.value = response.data.result
-        console.log(response)
       })
       .catch((error) => {
         console.log(error)
       })
   } catch (error) {
-    console.error('Error al cargar datos de vehículos', error)
+    console.error('Error al cargar vehículos', error)
+  }
+}
+
+const cargarClientes = async () => {
+  const url = 'http://127.0.0.1:8000/api/clientes/datos'
+
+  try {
+    await axios.get(url)
+      .then((response) => {
+        clientes.value = response.data.result
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  } catch (error) {
+    console.error('Error al cargar clientes', error)
   }
 }
 
 onMounted(() => {
   cargarVehiculos()
+  cargarClientes() // Cargamos los clientes al montar el componente
 })
 </script>
