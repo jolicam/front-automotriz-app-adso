@@ -1,7 +1,7 @@
 <template>
   <LayoutMain>
     <template #slotLayout>
-      <Header :titulo="'Clientes'" :tituloBoton="'Crear Cliente +'" :abrir="abrirFormulario" />
+      <Header :titulo="'Clientes'" :tituloBoton="'Crear Cliente'" :abrir="abrirFormulario" />
 
       <Formulario :titulo="'Gestión de Clientes'" v-model:is-open="mostrarFormulario" :is-edit="editandoFormulario"
         @save="guardarDatos" @update="actualizarDatos">
