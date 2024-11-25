@@ -36,7 +36,7 @@ import LayoutMain from '../../components/LayoutMain.vue'
 import Formulario from '../../components/Formulario.vue'
 import Header from '../../components/Header.vue'
 import { Delete, Edit } from "@element-plus/icons-vue"
-import formVehiculos from "./components/formVehiculos.vue" // Asegúrate que este nombre es correcto
+import formVehiculos from "./components/formVehiculos.vue" // Asegúrate de que este nombre es correcto
 import { ElMessage } from 'element-plus'
 import axios from 'axios'
 

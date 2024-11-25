@@ -8,10 +8,12 @@
     :size="formSize"
     status-icon
   >
+    <!-- Campo Servicio ID -->
     <el-form-item label="Servicio ID" prop="servicio_id">
       <el-input v-model="formulario.servicio_id" />
     </el-form-item>
     
+    <!-- Campo Mecánico -->
     <el-form-item label="Mecánico" prop="mecanico_id">
       <el-select v-model="formulario.mecanico_id" placeholder="Seleccione un mecánico">
         <el-option v-for="mecanico in mecanicos" 
@@ -21,6 +23,7 @@
       </el-select>
     </el-form-item>
 
+    <!-- Campo Repuesto -->
     <el-form-item label="Repuesto" prop="repuesto_id">
       <el-select v-model="formulario.repuesto_id" placeholder="Seleccione un repuesto">
         <el-option v-for="repuesto in repuestos" 
@@ -35,6 +38,7 @@
 <script setup>
 import { reactive, ref } from 'vue'
 
+// Propiedades que reciben los listados de mecánicos y repuestos
 const propiedad = defineProps({
   mecanicos: {
     type: Array,
@@ -49,12 +53,14 @@ const propiedad = defineProps({
 const formSize = ref('default')
 const formRef = ref()
 
+// Estado reactivo para el formulario
 const formulario = reactive({
   servicio_id: '',
   mecanico_id: '',
   repuesto_id: ''
 })
 
+// Reglas de validación
 const rulesForm = reactive({
   servicio_id: [
     { required: true, message: 'Por favor ingrese el servicio ID', trigger: 'blur' }
@@ -67,10 +73,12 @@ const rulesForm = reactive({
   ]
 })
 
+// Función para limpiar el formulario
 const limpiarFormulario = () => {
   formRef.value.resetFields()    
 }
 
+// Función para validar el formulario
 const validarFormulario = () => {
   return new Promise((resolve) => {
     formRef.value?.validate((valid) => {
@@ -83,6 +91,7 @@ const validarFormulario = () => {
   })
 }
 
+// Exponer las funciones necesarias para el componente
 defineExpose({ validarFormulario, formulario, limpiarFormulario })
 </script>
 

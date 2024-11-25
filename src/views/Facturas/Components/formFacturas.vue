@@ -1,13 +1,7 @@
 <template>
-  <el-form
-    ref="formRef"
-    style="max-width: 100%"
-    :model="formulario"
-    :rules="rulesForm"
-    label-width="auto"
-    :size="formSize"
-    status-icon
-  >
+  <el-form ref="formRef" style="max-width: 100%" :model="formulario" :rules="rulesForm" label-width="auto"
+    :size="formSize" status-icon>
+    
     <el-form-item label="Fecha" prop="fecha">
       <el-date-picker v-model="formulario.fecha" type="date" placeholder="Seleccione una fecha" />
     </el-form-item>
@@ -21,18 +15,19 @@
         <el-option v-for="cliente in clientes" :key="cliente.id" :label="cliente.nombre" :value="cliente.id" />
       </el-select>
     </el-form-item>
+
   </el-form>
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
-
+import { reactive, ref, watch } from 'vue'
 
 const propiedad = defineProps({
   clientes: {
     type: Array,
     required: true,
   },
+  dataValue: Object, // Para cargar los datos si es necesario
 })
 
 const formSize = ref('default')
@@ -49,10 +44,12 @@ const rulesForm = reactive({
   cliente_id: [{ required: true, message: 'Por favor seleccione un cliente', trigger: 'blur' }],
 })
 
+// Función para limpiar el formulario
 const limpiarFormulario = () => {
   formRef.value.resetFields()
 }
 
+// Función para validar el formulario
 const validarFormulario = () => {
   return new Promise((resolve) => {
     formRef.value?.validate((valid) => {
@@ -64,6 +61,21 @@ const validarFormulario = () => {
     })
   })
 }
+
+// Función para llenar los datos en el formulario (cuando se recibe `dataValue`)
+const datosFormulario = () => {
+  formulario.fecha = propiedad.dataValue?.fecha || '';
+  formulario.total = propiedad.dataValue?.total || '';
+  formulario.cliente_id = propiedad.dataValue?.cliente_id || '';
+}
+
+// Observador para detectar cambios en `dataValue`
+watch(
+  () => propiedad.dataValue,
+  (newData) => {
+    datosFormulario();
+  }
+);
 
 defineExpose({ validarFormulario, formulario, limpiarFormulario })
 </script>

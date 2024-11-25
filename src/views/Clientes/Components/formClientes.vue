@@ -30,10 +30,17 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch } from 'vue';
 
-const formSize = ref('default')
-const formRef = ref()
+// Propiedad para pasar los datos desde el componente padre
+const propiedad = defineProps({
+  dataValue: Object,
+});
+
+const formSize = ref('default');
+const formRef = ref();
+
+// El modelo de datos del formulario
 const formulario = reactive({
   nombre: '',
   apellido: '',
@@ -41,8 +48,19 @@ const formulario = reactive({
   direccion: '',
   telefono: '',
   email: '',
-})
+});
 
+// Función para asignar los datos del formulario
+const datosFormulario = () => {
+  formulario.nombre = propiedad.dataValue[0]?.nombre || '';
+  formulario.apellido = propiedad.dataValue[0]?.apellido || '';
+  formulario.identificacion = propiedad.dataValue[0]?.identificacion || '';
+  formulario.direccion = propiedad.dataValue[0]?.direccion || '';
+  formulario.telefono = propiedad.dataValue[0]?.telefono || '';
+  formulario.email = propiedad.dataValue[0]?.email || '';
+};
+
+// Reglas de validación para el formulario
 const rulesForm = reactive({
   nombre: [{ required: true, message: 'Por favor ingrese el nombre', trigger: 'blur' }],
   apellido: [{ required: true, message: 'Por favor ingrese el apellido', trigger: 'blur' }],
@@ -50,25 +68,36 @@ const rulesForm = reactive({
   direccion: [{ required: true, message: 'Por favor ingrese la dirección', trigger: 'blur' }],
   telefono: [{ required: true, message: 'Por favor ingrese el teléfono', trigger: 'blur' }],
   email: [{ required: true, message: 'Por favor ingrese el correo electrónico', trigger: 'blur' }],
-})
+});
 
+// Función para limpiar el formulario
 const limpiarFormulario = () => {
-  formRef.value.resetFields()    
-}
+  formRef.value.resetFields();
+};
 
+// Función para validar el formulario
 const validarFormulario = () => {
   return new Promise((resolve) => {
     formRef.value?.validate((valid) => {
       if (valid) {
-        resolve(true)            
+        resolve(true);
       } else {
-        resolve(false)             
+        resolve(false);
       }
-    })
-  })        
-}
+    });
+  });
+};
 
-defineExpose({ validarFormulario, formulario, limpiarFormulario })
+// Verificar si los datos del formulario han cambiado
+watch(
+  () => propiedad.dataValue,
+  (newData) => {
+    datosFormulario();
+  }
+);
+
+// Exposición de métodos y datos
+defineExpose({ validarFormulario, formulario, limpiarFormulario });
 </script>
 
 <style scoped>

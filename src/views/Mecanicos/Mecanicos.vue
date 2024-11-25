@@ -78,20 +78,14 @@ const crearMecanico = async () => {
   }
 
   try {
-    axios.post(url, dataFormulario)
-      .then(response => {
-        console.log(response)
-        formRef.value?.limpiarFormulario()
-        ElMessage({
-          message: 'El mecánico se creó con éxito.',
-          type: 'success',
-        })
-        datosMecanico()
-        mostrarFormulario.value = false
-      })
-      .catch(error => {
-        console.log(error)
-      })
+    await axios.post(url, dataFormulario)
+    formRef.value?.limpiarFormulario()
+    ElMessage({
+      message: 'El mecánico se creó con éxito.',
+      type: 'success',
+    })
+    cargarMecanicos()
+    mostrarFormulario.value = false
   } catch (error) {
     console.error('Error al crear mecánico', error)
   }
@@ -101,33 +95,21 @@ const eliminarMecanico = async () => {
   console.log('Se eliminó el mecánico')
 }
 
-const datosMecanico = async () => {
+const cargarMecanicos = async () => {
   const url = 'http://127.0.0.1:8000/api/mecanico/datos'
   try {
-    axios.get(url)
-      .then(response => {
-        mecanicos.value = response.data.result
-        console.log(response)
-      })
-      .catch(error => {
-        console.log(error)
-      })
+    const response = await axios.get(url)
+    mecanicos.value = response.data.result
   } catch (error) {
-    console.error('Error al obtener datos de mecánicos', error)
+    console.error('Error al cargar mecánicos', error)
   }
 }
 
 const getEspecialidades = async () => {
   const url = 'http://127.0.0.1:8000/api/especialidades/datos'
   try {
-    axios.get(url)
-      .then(response => {
-        especialidades.value = response.data.result
-        console.log(response)
-      })
-      .catch(error => {
-        console.log(error)
-      })
+    const response = await axios.get(url)
+    especialidades.value = response.data.result
   } catch (error) {
     console.error('Error al obtener especialidades', error)
   }
@@ -135,6 +117,6 @@ const getEspecialidades = async () => {
 
 onMounted(() => {
   getEspecialidades()
-  datosMecanico()
+  cargarMecanicos()
 })
 </script>

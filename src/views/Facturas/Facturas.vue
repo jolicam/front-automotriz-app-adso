@@ -22,9 +22,9 @@
         <el-table-column prop="total" label="Monto Total" />
         <el-table-column prop="fecha" label="Fecha" width="180" />
         <el-table-column fixed="right" label="Acciones" min-width="120">
-          <template #default>
-            <el-button link type="primary" size="large" :icon="Edit" @click="editarFormulario" />
-            <el-button link type="danger" :icon="Delete" @click="eliminarFactura" />
+          <template #default="scope">
+            <el-button link type="primary" size="large" :icon="Edit" @click="editarFormulario(scope.row)" />
+            <el-button link type="danger" :icon="Delete" @click="eliminarFactura(scope.row)" />
           </template>
         </el-table-column>
       </el-table>
@@ -47,23 +47,28 @@ const editandoFormulario = ref(false)
 const formRef = ref()
 const facturas = ref([])
 
+// Abrir el formulario para crear una nueva factura
 const abrirFormulario = () => {
   mostrarFormulario.value = true
   editandoFormulario.value = false
 }
 
-const editarFormulario = async () => {
+// Abrir el formulario para editar una factura existente
+const editarFormulario = (factura) => {
   mostrarFormulario.value = true
   editandoFormulario.value = true
+  formRef.value?.setFactura(factura)  // Cargar la factura a editar
 }
 
+// Guardar los datos del formulario
 const guardarDatos = async () => {
   const validacion = await formRef.value?.validarFormulario()
   if (validacion) {
-    await crearFactura()
+    editandoFormulario.value ? await actualizarFactura() : await crearFactura()
   }
 }
 
+// Crear una nueva factura
 const crearFactura = async () => {
   const url = 'http://127.0.0.1:8000/api/factura/save'
   const dataFormulario = {
@@ -85,10 +90,45 @@ const crearFactura = async () => {
   }
 }
 
-const eliminarFactura = async () => {
-  console.log('Se eliminó la factura')
+// Actualizar una factura existente
+const actualizarFactura = async () => {
+  const url = 'http://127.0.0.1:8000/api/factura/update'
+  const dataFormulario = {
+    id: formRef.value.formulario.id,
+    fecha: formRef.value.formulario.fecha,
+    total: formRef.value.formulario.total,
+    cliente_id: formRef.value.formulario.cliente_id,
+  }
+  try {
+    await axios.put(url, dataFormulario)
+    formRef.value?.limpiarFormulario()
+    ElMessage({
+      message: 'La factura se actualizó con éxito.',
+      type: 'success',
+    })
+    cargarFacturas()
+    mostrarFormulario.value = false
+  } catch (error) {
+    console.error('Error al actualizar factura', error)
+  }
 }
 
+// Eliminar una factura
+const eliminarFactura = async (factura) => {
+  const url = `http://127.0.0.1:8000/api/factura/eliminar/${factura.id}`
+  try {
+    await axios.delete(url)
+    ElMessage({
+      message: 'La factura se eliminó con éxito.',
+      type: 'success',
+    })
+    cargarFacturas()
+  } catch (error) {
+    console.error('Error al eliminar factura', error)
+  }
+}
+
+// Cargar todas las facturas desde la API
 const cargarFacturas = async () => {
   const url = 'http://127.0.0.1:8000/api/factura/datos'
   try {
@@ -99,6 +139,7 @@ const cargarFacturas = async () => {
   }
 }
 
+// Cargar las facturas al montar el componente
 onMounted(() => {
   cargarFacturas()
 })

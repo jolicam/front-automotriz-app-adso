@@ -7,7 +7,7 @@
         <template #slotForm>
           <el-row :gutter="20">
             <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-              <formServiciosMecanicos v-model:is-open="mostrarFormulario" :is-edit="editandoFormulario" ref="formRef" />
+              <formServiciosMecanicos v-model:is-open="mostrarFormulario" :is-edit="editandoFormulario" ref="formRef" :servicios="servicios" :mecanicos="mecanicos" :repuestos="repuestos" />
             </el-col>
           </el-row>
         </template>
@@ -19,8 +19,8 @@
         <el-table-column prop="repuesto_id" label="ID Repuesto" />
         <el-table-column fixed="right" label="Acciones" min-width="120">
           <template #default>
-            <el-button link type="primary" size="large" :icon="Edit" @click="editarFormulario"></el-button>
-            <el-button link type="danger" :icon="Delete" @click="eliminarServicioMecanico"></el-button>
+            <el-button link type="primary" size="large" :icon="Edit" @click="editarFormulario" />
+            <el-button link type="danger" :icon="Delete" @click="eliminarServicioMecanico" />
           </template>
         </el-table-column>
       </el-table>
@@ -34,7 +34,7 @@ import LayoutMain from '../../components/LayoutMain.vue'
 import Formulario from '../../components/Formulario.vue'
 import Header from '../../components/Header.vue'
 import { Delete, Edit } from "@element-plus/icons-vue"
-import formServiciosMecanicos from "./components/formServiciosMecanicos.vue" // Verifica que este nombre esté correcto
+import formServiciosMecanicos from "./components/formServiciosMecanicos.vue"
 import { ElMessage } from 'element-plus'
 import axios from 'axios'
 
@@ -42,6 +42,9 @@ const mostrarFormulario = ref(false)
 const editandoFormulario = ref(false)
 const formRef = ref()
 const serviciosMecanicos = ref([])
+const servicios = ref([])
+const mecanicos = ref([])
+const repuestos = ref([])
 
 const abrirFormulario = () => {
   mostrarFormulario.value = true
@@ -110,7 +113,61 @@ const cargarServiciosMecanicos = async () => {
   }
 }
 
+const cargarServicios = async () => {
+  const url = 'http://127.0.0.1:8000/api/servicio/datos'
+
+  try {
+    await axios.get(url)
+      .then((response) => {
+        servicios.value = response.data.result
+        console.log(response)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  } catch (error) {
+    console.error('Error al cargar servicios', error)
+  }
+}
+
+const cargarMecanicos = async () => {
+  const url = 'http://127.0.0.1:8000/api/mecanicos/datos'
+
+  try {
+    await axios.get(url)
+      .then((response) => {
+        mecanicos.value = response.data.result
+        console.log(response)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  } catch (error) {
+    console.error('Error al cargar mecánicos', error)
+  }
+}
+
+const cargarRepuestos = async () => {
+  const url = 'http://127.0.0.1:8000/api/repuestos/datos'
+
+  try {
+    await axios.get(url)
+      .then((response) => {
+        repuestos.value = response.data.result
+        console.log(response)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  } catch (error) {
+    console.error('Error al cargar repuestos', error)
+  }
+}
+
 onMounted(() => {
   cargarServiciosMecanicos()
+  cargarServicios()
+  cargarMecanicos()
+  cargarRepuestos()
 })
 </script>
