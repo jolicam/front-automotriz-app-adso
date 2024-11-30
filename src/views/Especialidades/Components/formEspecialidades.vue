@@ -4,21 +4,22 @@
     <el-form-item label="Nombre de Especialidad" prop="nombre_especialidad">
       <el-input v-model="formulario.nombre_especialidad" />
     </el-form-item>
-  </el-form>
+  </el-form>|
 </template>
 
 <script setup>
-import { reactive, ref, watch } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 
 const propiedad = defineProps({
-  dataValue: Object, // Usado si deseas pre-llenar el formulario
+  dataValue: Object,
 });
 
 const formSize = ref('default');
 const formRef = ref();
 
 const formulario = reactive({
-  nombre_especialidad: '', // Solo un campo en este caso
+  id: '',
+  nombre_especialidad: '',
 });
 
 // Reglas de validación
@@ -46,13 +47,18 @@ const validarFormulario = () => {
   });
 };
 
-// Si se reciben datos para editar, llenar el formulario automáticamente
+// Función para llenar los datos del formulario si se reciben datos para editar
+const datosFormulario = () => {
+  if (propiedad.dataValue) {
+    formulario.id = propiedad.dataValue.id || '';  // Asegurarse de asignar el ID en la edición
+    formulario.nombre_especialidad = propiedad.dataValue.nombre_especialidad;
+  }
+};
+
 watch(
   () => propiedad.dataValue,
   (newData) => {
-    if (newData) {
-      formulario.nombre_especialidad = newData.nombre_especialidad;
-    }
+    datosFormulario();
   }
 );
 

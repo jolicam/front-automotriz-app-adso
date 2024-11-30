@@ -17,9 +17,7 @@
     <el-form-item label="Identificación" prop="identificacion">
       <el-input v-model="formulario.identificacion" />
     </el-form-item>
-    <el-form-item label="Dirección" prop="direccion">
-      <el-input v-model="formulario.direccion" />
-    </el-form-item>
+
     <el-form-item label="Teléfono" prop="telefono">
       <el-input v-model="formulario.telefono" />
     </el-form-item>
@@ -45,7 +43,6 @@ const formulario = reactive({
   nombre: '',
   apellido: '',
   identificacion: '',
-  direccion: '',
   telefono: '',
   email: '',
 });
@@ -55,9 +52,8 @@ const datosFormulario = () => {
   formulario.nombre = propiedad.dataValue[0]?.nombre || '';
   formulario.apellido = propiedad.dataValue[0]?.apellido || '';
   formulario.identificacion = propiedad.dataValue[0]?.identificacion || '';
-  formulario.direccion = propiedad.dataValue[0]?.direccion || '';
   formulario.telefono = propiedad.dataValue[0]?.telefono || '';
-  formulario.email = propiedad.dataValue[0]?.email || '';
+  formulario.email = propiedad.dataValue[0]?.correo_electronico || '';
 };
 
 // Reglas de validación para el formulario

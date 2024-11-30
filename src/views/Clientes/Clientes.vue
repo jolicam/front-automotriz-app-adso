@@ -55,10 +55,12 @@ const abrirFormulario = () => {
 }
 
 const editarFormulario = async (id) => {
-  dataClienteById.value = await obtenerCliente(id)
+  dataClienteById.value = await datosById(id)
   mostrarFormulario.value = true
   editandoFormulario.value = true
 }
+
+
 
 const guardarDatos = async () => {
   const validacion = await formRef.value?.validarFormulario()
@@ -81,7 +83,7 @@ const crearCliente = async () => {
     apellido: formRef.value.formulario.apellido,
     identificacion: formRef.value.formulario.identificacion,
     telefono: formRef.value.formulario.telefono,
-    correo_electronico: formRef.value.formulario.correo_electronico
+    correo_electronico: formRef.value.formulario.email
   }
 
   try {
@@ -111,7 +113,7 @@ const actualizarCliente = async () => {
     apellido: formRef.value.formulario.apellido,
     identificacion: formRef.value.formulario.identificacion,
     telefono: formRef.value.formulario.telefono,
-    correo_electronico: formRef.value.formulario.correo_electronico
+    correo_electronico: formRef.value.formulario.email
   }
 
   try {
@@ -164,8 +166,8 @@ const eliminarCliente = async (id) => {
   })
 }
 
-const obtenerCliente = async (id) => {
-  const url = `http://127.0.0.1:8000/api/cliente/datosById`
+const datosById = async (id) => {
+  const url = `http://127.0.0.1:8000/api/cliente/getDataById`
   try {
     const response = await axios.get(url, {
       params: {
@@ -179,7 +181,7 @@ const obtenerCliente = async (id) => {
 }
 
 const obtenerClientes = async () => {
-  const url = 'http://127.0.0.1:8000/api/cliente/datos'
+  const url = 'http://127.0.0.1:8000/api/cliente/getData'
   try {
     axios.get(url)
       .then((response) => {

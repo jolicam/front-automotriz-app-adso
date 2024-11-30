@@ -162,7 +162,7 @@ const eliminarMecanico = async (id) => {
 }
 
 const cargarMecanicos = async () => {
-  const url = 'http://127.0.0.1:8000/api/mecanico/datos'
+  const url = 'http://127.0.0.1:8000/api/mecanico/getData'
   try {
     const response = await axios.get(url)
     mecanicos.value = response.data.result
@@ -172,7 +172,7 @@ const cargarMecanicos = async () => {
 }
 
 const getEspecialidades = async () => {
-  const url = 'http://127.0.0.1:8000/api/especialidades/datos'
+  const url = 'http://127.0.0.1:8000/api/especialidad/datos'
   try {
     const response = await axios.get(url)
     especialidades.value = response.data.result
@@ -182,7 +182,7 @@ const getEspecialidades = async () => {
 }
 
 const datosById = async (id) => {
-  const url = 'http://127.0.0.1:8000/api/mecanico/datosById'
+  const url = 'http://127.0.0.1:8000/api/mecanico/getDataById'
   try {
     const response = await axios.get(url, { params: { id } })
     return response.data.result

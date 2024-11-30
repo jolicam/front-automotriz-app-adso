@@ -34,7 +34,7 @@
         <el-option
           v-for="especialidad in especialidades"
           :key="especialidad.id"
-          :label="especialidad.nombre"
+          :label="especialidad.nombre_especialidad"
           :value="especialidad.id"
         />
       </el-select>
@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref , watch } from 'vue'
 
 // Propiedad que recibe el listado de especialidades
 const propiedad = defineProps({
@@ -52,6 +52,7 @@ const propiedad = defineProps({
     type: Array,
     required: true,
   },
+  dataValue:Object
 })
 
 const formSize = ref('default')
@@ -63,6 +64,14 @@ const formulario = reactive({
   telefono: '',
   especialidad_id: '',
 })
+
+const datosFormulario =()=>{
+  formulario.nombre= propiedad.dataValue[0].nombre  
+  formulario.apellido= propiedad.dataValue[0].apellido  
+  formulario.telefono= propiedad.dataValue[0].telefono  
+  formulario.documento= propiedad.dataValue[0].documento  
+  formulario.especialidad_id= propiedad.dataValue[0].especialidad_id
+}
 
 const rulesForm = reactive({
   nombre: [
@@ -97,6 +106,13 @@ const validarFormulario = () => {
     })
   })
 }
+
+watch(
+  () => propiedad.dataValue,
+  (newData) => {
+    datosFormulario();
+  }
+);
 
 defineExpose({ validarFormulario, formulario, limpiarFormulario })
 </script>

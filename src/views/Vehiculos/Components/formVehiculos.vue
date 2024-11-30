@@ -39,21 +39,13 @@
       </el-select>
     </el-form-item>
 
-    <!-- Campo Cargo (si corresponde a la relación del cliente) -->
-    <el-form-item label="Cargo del Cliente" prop="cargo_id">
-      <el-select v-model="formulario.cargo_id" placeholder="Seleccione un cargo">
-        <el-option v-for="cargo in cargos" 
-          :key="cargo.id" 
-          :label="cargo.nombre" 
-          :value="cargo.id" />
-      </el-select>
-    </el-form-item>
+
 
   </el-form>
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref , watch } from 'vue'
 
 // Propiedades que reciben el listado de clientes y cargos
 const propiedad = defineProps({
@@ -61,10 +53,7 @@ const propiedad = defineProps({
     type: Array,
     required: true
   },
-  cargos: {
-    type: Array,
-    required: true
-  }
+  dataValue:Object
 });
 
 const formSize = ref('default')
@@ -79,6 +68,14 @@ const formulario = reactive({
   cliente_id: '',
   cargo_id: '' // Campo para seleccionar el cargo relacionado
 })
+
+  const datosFormulario =()=>{
+    formulario.placa= propiedad.dataValue[0].placa
+    formulario.marca= propiedad.dataValue[0].marca
+    formulario.modelo= propiedad.dataValue[0].modelo
+    formulario.año= propiedad.dataValue[0].año
+    formulario.cliente_id= propiedad.dataValue[0].cliente_id
+  }
 
 // Reglas de validación
 const rulesForm = reactive({
@@ -119,7 +116,12 @@ const validarFormulario = () => {
     })
   })
 }
-
+watch(
+  () => propiedad.dataValue,
+  (newData) => {
+    datosFormulario();
+  }
+);
 // Exponer las funciones necesarias para el componente
 defineExpose({ validarFormulario, formulario, limpiarFormulario })
 </script>

@@ -55,11 +55,26 @@ const abrirFormulario = () => {
   servicioSeleccionado.value = null
 }
 
-const editarFormulario = (row) => {
+const editarFormulario = async (row) => {
   mostrarFormulario.value = true
   editandoFormulario.value = true
   servicioSeleccionado.value = row
-  formRef.value.formulario = { ...row }
+  // Llamamos a la función para obtener los datos del servicio por ID
+  await getServicioById(row.id)
+}
+
+const getServicioById = async (id) => {
+  const url = `http://127.0.0.1:8000/api/servicio/${id}`
+  
+  try {
+    const response = await axios.get(url)
+    const servicio = response.data.result
+    // Asignamos los datos al formulario para editar
+    formRef.value.formulario = servicio
+  } catch (error) {
+    console.error('Error al obtener el servicio por ID', error)
+    ElMessage.error('Error al obtener los datos del servicio')
+  }
 }
 
 const guardarDatos = async () => {

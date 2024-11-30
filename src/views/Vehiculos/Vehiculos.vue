@@ -3,7 +3,7 @@
     <template #slotLayout>
       <Header :titulo="'Vehículos'" :tituloBoton="'Crear Vehículo'" :abrir="abrirFormulario" />
 
-      <Formulario :titulo="'Gestión de Vehículos'" v-model:is-open="mostrarFormulario" :is-edit="editandoFormulario" @save="guardarDatos">
+      <Formulario :titulo="'Gestión de Vehículos'" v-model:is-open="mostrarFormulario" :is-edit="editandoFormulario" @save="guardarDatos" @update="actualizarDatos">
         <template #slotForm>
           <el-row :gutter="20">
             <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
@@ -36,7 +36,7 @@ import LayoutMain from '../../components/LayoutMain.vue'
 import Formulario from '../../components/Formulario.vue'
 import Header from '../../components/Header.vue'
 import { Delete, Edit } from "@element-plus/icons-vue"
-import formVehiculos from './components/formVehiculos.vue' // Asegúrate de que este nombre es correcto
+import formVehiculos from './components/formVehiculos.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import axios from 'axios'
 
@@ -53,7 +53,7 @@ const abrirFormulario = () => {
 }
 
 const editarFormulario = async (id) => {
-  dataVehiculoById.value = await datosById(id)
+  dataVehiculoById.value = await datosById(id) // Llamamos a datosById para cargar los datos del vehículo
   mostrarFormulario.value = true
   editandoFormulario.value = true
 }
@@ -64,7 +64,12 @@ const guardarDatos = async () => {
     await crearVehiculo()
   }
 }
-
+const actualizarDatos = async () => {
+  const validacion = await formRef.value?.validarFormulario()
+  if (validacion) {
+    await actualizarVehiculo()
+  }
+}
 const crearVehiculo = async () => {
   const url = 'http://127.0.0.1:8000/api/vehiculo/save'
 
@@ -127,7 +132,20 @@ const actualizarVehiculo = async () => {
     console.error('Error al actualizar vehículo', error)
   }
 }
-
+const obtenerClientes = async () => {
+  const url = 'http://127.0.0.1:8000/api/cliente/getData'
+  try {
+    axios.get(url)
+      .then((response) => {
+        clientes.value = response.data.result
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  } catch (error) {
+    console.error('Error al obtener clientes', error)
+  }
+}
 const eliminarVehiculo = async (id) => {
   const url = 'http://127.0.0.1:8000/api/vehiculo/delete'
 
@@ -166,7 +184,7 @@ const eliminarVehiculo = async (id) => {
 }
 
 const cargarVehiculos = async () => {
-  const url = 'http://127.0.0.1:8000/api/vehiculo/datos'
+  const url = 'http://127.0.0.1:8000/api/vehiculo/getData'
 
   try {
     await axios.get(url)
@@ -181,24 +199,43 @@ const cargarVehiculos = async () => {
   }
 }
 
-const cargarClientes = async () => {
-  const url = 'http://127.0.0.1:8000/api/clientes/datos'
 
+
+// Aquí implementamos la función `datosById` para obtener los datos de un vehículo por su ID
+const datosById = async (id) => {
+  const url = `http://127.0.0.1:8000/api/vehiculo/getDataById`
   try {
-    await axios.get(url)
+    const response = await axios.get(url, {
+      params: {
+        id: id
+      }
+    })
+    return response.data.result
+  } catch (error) {
+    console.error('Error al obtener vehiculo por ID', error)
+  }
+
+}
+
+const obtenerVehiculos = async () => {
+  const url = 'http://127.0.0.1:8000/api/vehiculos/getData'
+  try {
+    axios.get(url)
       .then((response) => {
-        clientes.value = response.data.result
+        vehiculos.value = response.data.result
       })
       .catch((error) => {
         console.log(error)
       })
   } catch (error) {
-    console.error('Error al cargar clientes', error)
+    console.error('Error al obtener vehiculos', error)
   }
 }
+  
+
 
 onMounted(() => {
   cargarVehiculos()
-  cargarClientes() // Cargamos los clientes al montar el componente
+ obtenerClientes() // Cargamos los clientes al montar el componente
 })
 </script>
