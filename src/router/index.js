@@ -1,15 +1,15 @@
 import { createRouter, createWebHistory } from "vue-router";
 import LayoutMain from '../components/LayoutMain.vue';
 import Login from '../components/Login.vue';
-import Especialidades from '../views/especialidades/especialidades.vue';
-import Clientes from '../views/clientes/clientes.vue';
-import Vehiculos from '../views/vehiculos/vehiculos.vue';
+import Especialidades from '../views/Especialidades/Especialidades.vue';
+import Clientes from '../views/Clientes/Clientes.vue';
+import Vehiculos from '../views/Vehiculos/Vehiculos.vue';
 import Mecanicos from '../views/Mecanicos/Mecanicos.vue';
-import Servicios from '../views/servicios/servicios.vue';
-import Repuestos from '../views/repuestos/repuestos.vue';
-import Facturas from '../views/facturas/facturas.vue';
+import Servicios from '../views/Servicios/Servicios.vue';
+import Repuestos from '../views/Repuestos/Repuestos.vue';
+import Facturas from '../views/Facturas/Facturas.vue';
 import ServiciosMecanicos from '../views/ServiciosMecanicos/ServiciosMecanicos.vue'; 
-
+//revisa mayusuculas y minusculas por favor
 
 const routes = [
   {
@@ -24,42 +24,42 @@ const routes = [
   },
   {
     path: '/especialidades',
-    name: 'Especialidades',
+    name: 'especialidades',
     component: Especialidades,
   },
   {
     path: '/clientes',
-    name: 'Clientes',
+    name: 'clientes',
     component: Clientes,
   },
   {
     path: '/vehiculos',
-    name: 'Vehiculos',
+    name: 'vehiculos',
     component: Vehiculos,
   },
   {
     path: '/mecanicos',
-    name: 'Mecanicos',
+    name: 'mecanicos',
     component: Mecanicos,
   },
   {
     path: '/servicios',
-    name: 'Servicios',
+    name: 'servicios',
     component: Servicios,
   },
   {
     path: '/repuestos',
-    name: 'Repuestos',
+    name: 'repuestos',
     component: Repuestos,
   },
   {
     path: '/serviciosMecanicos',
-    name: 'ServiciosMecanicos',
+    name: 'serviciosMecanicos',
     component: ServiciosMecanicos,
   },
   {
     path: '/facturas',
-    name: 'Facturas',
+    name: 'facturas',
     component: Facturas,
   },
   // {

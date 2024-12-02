@@ -39,9 +39,11 @@ import LayoutMain from '../../components/LayoutMain.vue'
 import Formulario from '../../components/Formulario.vue'
 import Header from '../../components/Header.vue'
 import { Delete, Edit } from "@element-plus/icons-vue"
-import FormClientes from './components/FormClientes.vue'
+import FormClientes from './components/formClientes.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import axios from 'axios'
+
+//revis modulo por modulo que se lñlamen los archivos que importas tal cual como estan
 
 const mostrarFormulario = ref(false)
 const editandoFormulario = ref(false)
