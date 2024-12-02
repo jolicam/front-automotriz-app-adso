@@ -40,7 +40,7 @@ const mostrarFormulario = ref(false)
 const editandoFormulario = ref(false)
 const formRef = ref()
 const especialidades = ref([])
-const especialidadSeleccionada = ref(null)
+const especialidadSeleccionada = ref()
 
 // Abrir el formulario para crear una nueva especialidad
 const abrirFormulario = () => {

@@ -45,7 +45,7 @@ const mostrarFormulario = ref(false)
 const editandoFormulario = ref(false)
 const formRef = ref()
 const repuestos = ref([])
-const dataRepuestoById = ref(null)
+const dataRepuestoById = ref()
 
 const abrirFormulario = () => {
   mostrarFormulario.value = true

@@ -47,7 +47,7 @@ const formRef = ref()
 const vehiculos = ref([]) // List of vehicles
 const mecanicos = ref([]) // List of mechanics
 const servicios = ref([]) // List of services
-const servicioSeleccionado = ref(null)
+const servicioSeleccionado = ref()
 
 const abrirFormulario = () => {
   mostrarFormulario.value = true
