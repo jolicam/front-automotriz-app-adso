@@ -54,6 +54,7 @@ const mecanicos = ref([])
 const abrirFormulario = () => {
   mostrarFormulario.value = true
   editandoFormulario.value = false
+  
 }
 
 const editarFormulario = async (id) => {
