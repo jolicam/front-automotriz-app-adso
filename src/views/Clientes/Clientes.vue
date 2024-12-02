@@ -35,11 +35,14 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
+//No toca la c dejarla como esta en minuscula estos son los componentes
 import LayoutMain from '../../components/LayoutMain.vue'
 import Formulario from '../../components/Formulario.vue'
 import Header from '../../components/Header.vue'
 import { Delete, Edit } from "@element-plus/icons-vue"
-import FormClientes from './components/formClientes.vue'
+//lo unico que tienes que hacer es colocar la C  en mayusucula... nada mas
+import FormClientes from './Components/formClientes.vue'
+//// eso es todo cambiar una sola C pero solo la de los formulario no la de los componentes
 import { ElMessage, ElMessageBox } from 'element-plus'
 import axios from 'axios'
 

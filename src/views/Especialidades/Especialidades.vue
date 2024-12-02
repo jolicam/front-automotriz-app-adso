@@ -32,7 +32,7 @@ import LayoutMain from '../../components/LayoutMain.vue'
 import Formulario from '../../components/Formulario.vue'
 import Header from '../../components/Header.vue'
 import { Delete, Edit } from "@element-plus/icons-vue"
-import formEspecialidades from './components/formEspecialidades.vue'
+import formEspecialidades from './Components/formEspecialidades.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import axios from 'axios'
 

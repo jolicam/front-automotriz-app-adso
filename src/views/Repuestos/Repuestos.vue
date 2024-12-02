@@ -36,7 +36,7 @@ import { onMounted, ref } from 'vue'
 import LayoutMain from '../../components/LayoutMain.vue'
 import Formulario from '../../components/Formulario.vue'
 import Header from '../../components/Header.vue'
-import formRepuestos from './components/formRepuestos.vue'
+import formRepuestos from './Components/formRepuestos.vue'
 import { Delete, Edit } from "@element-plus/icons-vue"
 import { ElMessage, ElMessageBox } from 'element-plus'
 import axios from 'axios'
